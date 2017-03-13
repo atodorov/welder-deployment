@@ -1,0 +1,13 @@
+sudo: required
+services:
+  - docker
+script:
+  - make build
+  - docker images
+  - ISO=`curl http://isoredirect.centos.org/centos/7/isos/x86_64/CentOS-7-x86_64-Everything-1611.iso | grep "\.iso" | grep http | head -n 1 | cut -d':' -f3 | sed 's|//|http://|'`
+  - wget $ISO -O CentOS.iso
+  - mkdir iso rpms
+  - sudo mount -o loop CentOS.iso ./iso
+  - sudo mount -o bind ./iso/Packages/ ./rpms/
+  - make import
+  - ls -l
